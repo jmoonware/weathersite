@@ -96,7 +96,9 @@ def update_wind_gauge_stats(*args):
 
 
 	# update logged data origins
-	options=[{'label':v,'value':v} for v in data.theDataReader.data_cache.keys()]
+	options=[{'label':'NA','value':'NA'}]
+	if len(data.theDataReader.data_cache.keys())>0:
+		options=[{'label':v,'value':v} for v in data.theDataReader.data_cache.keys()]
 
 
 	return options, vmph_1m,vmph_max,nicedt_vmph_max,vmph_max_record,nicedt_vmph_record,dir_med_1m,dir_med_24
@@ -253,7 +255,7 @@ def update_gauges(*args):
 
 def SetupCallbacks(app):
 	""" params: dash app) """
-
+	
 	@app.callback(
 		[
 			Output(component_id=vc.theYColumnPicker.id,component_property=vc.theYColumnPicker.options),
@@ -270,7 +272,6 @@ def SetupCallbacks(app):
 	def callback_update_wind_gauge_stats(*args):
 		return(update_wind_gauge_stats(args))
 	
-
 	@app.callback(
 		[
 			Output(component_id='forecast', component_property='children'),
@@ -310,7 +311,7 @@ def SetupCallbacks(app):
 		return update_gauges(args)
 	
 
-
+	
 	@app.callback(
 		[
 			Output(component_id=vc.theSpeedGauge.id, component_property=vc.theSpeedGauge.figure),
@@ -459,6 +460,7 @@ def SetupCallbacks(app):
 		# update the stats panels
 		
 		return fig_speed, fig_angle, dir_lastupdate, text_lastupdate
+#		return dir_lastupdate, text_lastupdate
 
 	@app.callback(
 		Output(component_id=vc.theDataGraph.id, component_property=vc.theDataGraph.figure),
@@ -586,7 +588,7 @@ def SetupCallbacks(app):
 		if n:
 			return not is_open
 		return is_open
-		
+
 	def convert_stats(s,label):
 		keys=['min','max','p25','p50','p75','mean','std'] # keys to convert
 		for k in keys:

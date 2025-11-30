@@ -155,12 +155,13 @@ def SetupView(controller,dr):
 			justify='center',
 		)
 	)
+	
 	lo.append(
 		dbc.Row(
 			[
 				dbc.Col(
 					[
-						dcc.Graph(id=vc.theSpeedGauge.id,config={'staticPlot':True}), 
+						dcc.Graph(id=vc.theSpeedGauge.id,config={'staticPlot':True},style={'width':'100%','height':'300px'}), 
 						dbc.Card(
 							[
 								dbc.CardBody(
@@ -196,7 +197,7 @@ def SetupView(controller,dr):
 				),
 				dbc.Col(
 					[
-						dcc.Graph(id=vc.theAngleGauge.id,config={'staticPlot':True}),
+						dcc.Graph(id=vc.theAngleGauge.id,config={'staticPlot':True},style={'width':'100%','height':'300px'}),
 						dbc.Card(
 							[
 								dbc.CardBody(
@@ -215,7 +216,7 @@ def SetupView(controller,dr):
 									]),
 							],
 						),
-						html.Div(' ',style={'margin-bottom': 25}),
+#						html.Div(' ',style={'margin-bottom': 25}),
 						dbc.Card(
 							[
 								dbc.CardBody(
@@ -242,7 +243,6 @@ def SetupView(controller,dr):
 			justify='center',
 		)
 	)
-
 	lo.append(
 		dbc.Row(
 			dbc.Col(

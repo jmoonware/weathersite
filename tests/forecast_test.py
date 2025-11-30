@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append("..")
+
 import requests
 import settings
 
