@@ -36,7 +36,7 @@ def update_wind_gauge_stats(*args):
 	# VMPH Stats
 	# last minute
 	vmph_1m='N/A'
-	t,r = data.theDataReader.GetCacheData('wind_vmph',oldest_hour=1./60)
+	t,r = data.theDataReader.GetCacheData(settings.origins.wind_speed,oldest_hour=1./60)
 	if len(r) > 0:
 		vmph_1m="{0:.1f}".format(np.mean(r))
 
@@ -45,7 +45,7 @@ def update_wind_gauge_stats(*args):
 	# last 24 hrs
 	vmph_max='N/A'
 	nicedt_vmph_max='N/A'
-	t,s = data.theDataReader.GetCacheStats('wind_vmph',oldest_hour=24)
+	t,s = data.theDataReader.GetCacheStats(settings.origins.wind_speed,oldest_hour=24)
 	if len(s) > 0 and len(s['max']) > 0:
 		max_idx=np.argmax(s['max'])
 		vmph_tmax=s['maxtime'][max_idx]
@@ -58,7 +58,7 @@ def update_wind_gauge_stats(*args):
 	# all-time record (10 years)
 	vmph_max_record='N/A'
 	nicedt_vmph_record='N/A'
-	t,s = data.theDataReader.GetCacheStats('wind_vmph',oldest_hour=24*3650,hourly=False)
+	t,s = data.theDataReader.GetCacheStats(settings.origins.wind_speed,oldest_hour=24*3650,hourly=False)
 	if len(s) > 0 and len(s['max']) > 0:
 		max_idx=np.argmax(s['max'])
 		vmph_tmax=s['maxtime'][max_idx]
@@ -76,7 +76,7 @@ def update_wind_gauge_stats(*args):
 	
 	dir_med_1m='N/A'
 	deg_med_1m=0
-	t,r = data.theDataReader.GetCacheData('wind_angle',oldest_hour=1./60)
+	t,r = data.theDataReader.GetCacheData(settings.origins.wind_angle,oldest_hour=1./60)
 	if len(r) > 0:	
 		deg_med_1m=np.mean(r)
 		dir_med_1m='{0} ({1:.1f})'.format(sector_text[np.argmin(abs(sector_start-deg_med_1m))],deg_med_1m)
@@ -84,7 +84,7 @@ def update_wind_gauge_stats(*args):
 	data.theDataReader.ephemera['deg_med_1m']=deg_med_1m
 	data.theDataReader.ephemera['dir_med_1m']=dir_med_1m
 
-	t,s = data.theDataReader.GetCacheStats('wind_angle',oldest_hour=24)
+	t,s = data.theDataReader.GetCacheStats(settings.origins.wind_angle,oldest_hour=24)
 	dir_med_24='N/A'
 	deg_med_24=0
 	if len(s) > 0 and len(s['p50']) > 0:
@@ -218,7 +218,7 @@ def update_gauges(*args):
 	# last 24 hrs
 	max_temp='N/A'
 	min_temp='N/A'
-	t,s = data.theDataReader.GetCacheStats('outside_T',oldest_hour=24)
+	t,s = data.theDataReader.GetCacheStats(settings.origins.outside_T,oldest_hour=24)
 	if len(s) > 0 and len(s['max']) > 0:
 		max_temp="{0:.1f}".format(9*np.max(s['max'])/5. + 32)
 	if len(s) > 0 and len(s['min']) > 0:
@@ -230,7 +230,7 @@ def update_gauges(*args):
 	# last 24 hrs
 	max_humidity='N/A'
 	min_humidity='N/A'
-	t,s = data.theDataReader.GetCacheStats('outside_H',oldest_hour=24)
+	t,s = data.theDataReader.GetCacheStats(settings.origins.outside_H,oldest_hour=24)
 	if len(s) > 0 and len(s['max']) > 0:
 		max_humidity="{0:.1f}".format(np.max(s['max']))
 	if len(s) > 0 and len(s['min']) > 0:
