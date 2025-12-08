@@ -11,6 +11,7 @@ from datetime import date
 import control
 import viewclasses as vc
 import json
+import settings
 
 
 textcolor='rgba(210,230,255,255)'
@@ -25,7 +26,8 @@ def SetupView(controller,dr):
 
 	app=controller.app
 #	lo=[html.H2(children='Project')]
-	lo=[html.H1('Weather Station',style={'textAlign': 'center'})]
+	lo=[html.H1(settings.page_banner,style={'textAlign': 'center'})]
+	lo.append(html.H3(settings.page_sub_banner,style={'textAlign': 'center'}))
 	lo.append(html.Div(' ',style={'margin-bottom': 25}))
 #	lo=[]
 	lo.append(

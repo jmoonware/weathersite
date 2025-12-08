@@ -6,7 +6,8 @@ from datetime import datetime
 import logging
 import logging.handlers
 from importlib import reload
-from DataLogger import DataReader,DataWriter
+from datalogger.datareader import DataReader
+from datalogger.datawriter import DataWriter
 import settings
 
 # note: Dash can start multiple instances of these!
