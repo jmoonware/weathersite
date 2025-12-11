@@ -508,7 +508,7 @@ def SetupCallbacks(app):
 		now=date.today()
 		now_dt=dt.now(pytz.utc)
 		
-		print((granularity, timespan))
+#		print((granularity, timespan))
 		
 		ycol='wind_vmph'		
 		if len(args) > 1:
@@ -519,7 +519,7 @@ def SetupCallbacks(app):
 		
 #		print(start_date)
 		naive_start_dt=dt.strptime(start_date,"%Y-%m-%d")
-		print(naive_start_dt)
+#		print(naive_start_dt)
 
 		if naive_start_dt.date() < now: # if it is today just let DataReader calculate now
 			local_time = pytz.timezone(settings.report_timezone)
@@ -528,7 +528,7 @@ def SetupCallbacks(app):
 		else:
 			utc_start_datetime=None
 			
-		print(utc_start_datetime)
+#		print(utc_start_datetime)
 	
 		if ycols==None:
 			fig = {}
@@ -539,7 +539,7 @@ def SetupCallbacks(app):
 		the_plots=[]
 		the_stats=[]
 		the_labels=[]
-		print(granularity,hours)
+#		print(granularity,hours)
 		newest_hour=0
 		oldest_hour=hours
 		if utc_start_datetime:
