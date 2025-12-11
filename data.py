@@ -20,8 +20,7 @@ def StartDataLogging():
 	theDataWriter=DataWriter(settings={'data_root':settings.data_root})
 	theDataReader=DataReader(settings={'data_root':settings.data_root})
 	logFormatString='\t'.join(['%(asctime)s','%(levelname)s','%(message)s'])
-	if "report_timezone" in settings:
-		theDataReader.report_timezone = settings['report_timezone']
+	theDataReader.report_timezone = settings.report_timezone
 	level=logging.DEBUG
 	addr=theDataWriter.__repr__().split('.')[-1].split(' ')[-1].split('>')[0]
 	filename=settings.log_path.split('.txt')[0]+addr+'.txt' # unique-ish log name every startover
