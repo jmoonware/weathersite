@@ -1,47 +1,29 @@
 
-Download and install miniconda3
-curl https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh > mc3.sh
-bash mc3.sh
+*** New instructions (12/2025)
 
-I put things in /opt/miniconda3
+Using uv makes a lot of the setup pretty painless. I usually put the code in 
+/var/www, so to install:
 
-Might have to change group on /opt to users or something, and add default ubuntu user (or other user) to users
+cd /var/www
+git clone https://github.com/jmoonware/weathersite
+uv sync
 
-sudo usermod -a -G users ubuntu
-sudo chgrp users /opt
-sudo chmod 775 /opt
+Don't forget to add mod_wsgi as a dependency beforehand using uv via:
 
-when the installer asks, change path to /opt/miniconda3. At the end have the shell auto-activate the base conda environment
+uv add mod_wsgi
 
-
-
-If you arent in a virtual environment to start then 
-/opt/miniconda3/bin/conda init bash
-then close and reopen terminal
-
-conda deactivate
-Need a venv python environment to hand to Apache
-sudo apt install python3.8-venv
-python3 -m venv /opt/miniconda3/www-env
-source /opt/miniconda3/www-env/bin/activate
-
-install dash, pandas, mod_wsgi
-
-pip3 install dash
-pip3 install pandas
-pip3 install mod_wsgi 
-
-also, install whatever libs needed for your Python project below (e.g., flask_restful, pytz, etc.)
-
+If this is a fresh cloud instance apache2 might need to be installed via:
 sudo apt install apache2
 sudo apt install apache2-dev
 
-
-Got this info from https://flask.palletsprojects.com/en/2.0.x/deploying/mod_wsgi/
+Got this info from https://flask.palletsprojects.com/en/2.0.x/deploying/mod_wsgi/. Not sure it is needed but:
 
 sudo apt install libapache2-mod-wsgi-py3
 
-In the <project_name>.wsgi file (change <project_name> to whatever the project name is, eg 'homeautomation'):
+BTW, it is very important the the mod_wsgi module matches the version of 
+Python being used - I haven't tested what happens if the uv venv python version doesn't match the system python version 
+
+In the <project_name>.wsgi file (change <project_name> to whatever the project name is, eg 'weathersite'):
 
 	import sys
 	sys.path.insert(0,'/var/www/<project_name>')
@@ -55,38 +37,29 @@ you will need a <project_name>.py file with a couple lines like this somewhere (
 	server=flask.Flask(__name__)
 	app=dash.Dash(__name__, external_stylesheets=external_stylesheets,server=server)
 
-		
-In the Apache 000=default file add (for port 8081, change to something else if needed):
+Create weathersite.exampledomain.org.conf file in /etc/apache2/site-enabled (where "weathersite.exampledomain.org" is the dns of the server - see update_dns.sh for details)
 
-<VirtualHost *:8081>
-	WSGIDaemonProcess <project_name> python-home=/opt/miniconda3/www-env threads=5
-	WSGIScriptAlias / /var/www/<project_name>/<project_name>.wsgi
-	<Directory /var/www/<project_name>>
-		WSGIProcessGroup <project_name>
-		WSGIApplicationGroup %{GLOBAL}
-		WSGIScriptReloading On
-		Order deny,allow
-		Allow from all
-	</Directory>
-	
-	....
-	
-</VirtualHost>
+An example of this file is checked in as weathersite.exampledomain.org.conf. Follow the instructions from Let's Encrypt to generate a proper certificate for the site.
 
-Note that if your program is writing to the filesystem, then the user/group default is www-data, so set up
-a directory with the right ownership e.g, to set up a folder /opt/WebSite for data to be written to by the project above,
+Note that if your program is writing to the filesystem, 
+then the user/group default is www-data, so set up
+a directory with the right ownership 
+e.g, to set up a folder /opt/WebSite for data to be written to by the project above,
 
 sudo mkdir /opt/WebSite
 sudo chown www-data /opt/WebSite
 sudo chgrp www-data /opt/WebSite
 sudo chmod 644 /opt/WebSite
 
-Edit the /etc/apache2/sites-enabled/000-default.conf file
-Edit the /etc/apache2/ports.conf file to Listen on the same port as in the 000-default.conf file
+Edit the /etc/apache2/ports.conf file to Listen on the same port as in the .conf file in sites-enabled.
+
+Also, make sure the server firewall is configured to let connections 
+happen on whatever port is chosen
 
 then sudo systemctl restart apache2
 
-look in /var/log/apache2/errors.log for what happened or
+Look in /var/log/apache2/errors.log (or others in this directory)
+for what happened (or didn't)
  
 sudo systemctl status apache2
 

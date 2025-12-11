@@ -14,6 +14,7 @@ MYIP=`curl http://checkip.amazonaws.com`
 DYNUAPIKEY = abcd1234
 
 # this will list DNS record numbers that are needed below
+# a better implementation would parse this return for these numbers
 curl -X GET https://api.dynu.com/v2/dns \
 	-H "accept:application/json" \
 	-H "API-Key: $DYNUAPIKEY" 
