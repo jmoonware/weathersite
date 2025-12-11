@@ -1,0 +1,12 @@
+[Unit]
+Description=Update dynamic DNS records at Dynu
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/update_dns.sh
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

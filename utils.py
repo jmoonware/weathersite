@@ -81,7 +81,6 @@ def update_dailyprecip(*args):
 				with requests.Session() as req:
 					req.headers.update(headers)
 					res = req.get(precip_url.format(yr-2000))
-				breakpoint()
 				if res:
 					lines=res.text.split('\n')
 					for l in lines:

@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0,'/var/www/project')
-sys.path.append('/opt/miniconda3/www-env')
+sys.path.insert(0,'/var/www/weathersite')
+sys.path.append('/var/www/weathersite/.venv')
 sys.stdout=sys.stderr
 from project import server as application
