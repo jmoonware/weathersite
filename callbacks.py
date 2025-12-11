@@ -49,7 +49,7 @@ def update_wind_gauge_stats(*args):
 	if len(s) > 0 and len(s['max']) > 0:
 		max_idx=np.argmax(s['max'])
 		vmph_tmax=s['maxtime'][max_idx]
-		nicedt_vmph_max='  '+'-'.join(dt.utcfromtimestamp(vmph_tmax).replace(tzinfo=pytz.UTC).astimezone(tz=pytz.timezone('US/Pacific')).isoformat(' ','minutes').split('-')[1:3])
+		nicedt_vmph_max='  '+'-'.join(dt.utcfromtimestamp(vmph_tmax).replace(tzinfo=pytz.UTC).astimezone(tz=pytz.timezone(settings.report_timezone)).isoformat(' ','minutes').split('-')[1:3])
 		vmph_max="{0:.1f}".format(np.max(s['max']))
 
 	data.theDataReader.ephemera['nicedt_vmph_max_24hr']=nicedt_vmph_max
@@ -62,7 +62,7 @@ def update_wind_gauge_stats(*args):
 	if len(s) > 0 and len(s['max']) > 0:
 		max_idx=np.argmax(s['max'])
 		vmph_tmax=s['maxtime'][max_idx]
-		nicedt_vmph_record='  '+'-'.join(dt.utcfromtimestamp(vmph_tmax).replace(tzinfo=pytz.UTC).astimezone(tz=pytz.timezone('US/Pacific')).isoformat(' ','minutes').split('-')[0:3])
+		nicedt_vmph_record='  '+'-'.join(dt.utcfromtimestamp(vmph_tmax).replace(tzinfo=pytz.UTC).astimezone(tz=pytz.timezone(settings.report_timezone)).isoformat(' ','minutes').split('-')[0:3])
 		vmph_max_record="{0:.1f}".format(np.max(s['max']))
 
 
@@ -334,13 +334,13 @@ def SetupCallbacks(app):
 		if 'wind_vmph' in newvals:
 			vmph=newvals['wind_vmph']['reading']
 			# nothing is simple
-#			vmph_lastupdate='-'.join(dt.utcfromtimestamp(newvals['wind_vmph']['time']).replace(tzinfo=pytz.UTC).astimezone(tz=pytz.timezone('US/Pacific')).isoformat(' ','minutes').split('-')[0:3])
+#			vmph_lastupdate='-'.join(dt.utcfromtimestamp(newvals['wind_vmph']['time']).replace(tzinfo=pytz.UTC).astimezone(tz=pytz.timezone(settings.report_timezone)).isoformat(' ','minutes').split('-')[0:3])
 
 		
 		if 'wind_angle' in newvals:
 			deg = newvals['wind_angle']['reading']
 			last_dt=dt.utcfromtimestamp(newvals['wind_angle']['time']).replace(tzinfo=pytz.UTC)
-			dir_lastupdate='-'.join(last_dt.astimezone(tz=pytz.timezone('US/Pacific')).isoformat(' ','seconds').split('-')[0:3])
+			dir_lastupdate='-'.join(last_dt.astimezone(tz=pytz.timezone(settings.report_timezone)).isoformat(' ','seconds').split('-')[0:3])
 			now=dt.now(pytz.utc).replace(tzinfo=pytz.UTC)
 			if (now-last_dt).total_seconds() < 120:
 				text_lastupdate='text-success'
@@ -495,7 +495,7 @@ def SetupCallbacks(app):
 		print(naive_start_dt)
 
 		if naive_start_dt.date() < now: # if it is today just let DataReader calculate now
-			local_time = pytz.timezone("US/Pacific")
+			local_time = pytz.timezone(settings.report_timezone)
 			local_datetime = local_time.localize(naive_start_dt, is_dst=None)
 			utc_start_datetime = local_datetime.astimezone(pytz.utc)
 		else:
