@@ -28,7 +28,7 @@ def update_all():
 
 	if dt.now().timestamp() - last_update > 4*3600:
 		update_forecast(None)
-		update_dailyprecip(None)
+#		update_dailyprecip(None)
 		last_update = dt.now().timestamp()
 
 def update_wind_gauge_stats(*args):
@@ -203,7 +203,7 @@ def update_gauges(*args):
 	
 	current_temp = "{0:.1f}".format(np.random.rand()*60)
 	current_humidity = "{0:.1f}".format(np.random.rand()*100)
-	precip_1hr = "{0:.1f}".format(np.random.rand()*10)
+	current_pressure = "{0:.1f}".format(np.random.rand()*10)
 
 	newvals=data.theDataReader.GetLatestReadings()
 	if settings.origins.outside_T in newvals:
@@ -212,10 +212,13 @@ def update_gauges(*args):
 	if settings.origins.outside_H in newvals:
 		current_humidity="{0:.1f}".format(newvals[settings.origins.outside_H]['reading'])
 
-	if 'precip_inphr' in newvals:
-		precip_1hr="{0:.1f}".format(newvals['precip_inphr']['reading'])
+	if settings.origins.outside_P in newvals:
+		current_pressure="{0:.1f}".format(newvals[settings.origins.outside_P]['reading'])
 
-	# last 24 hrs
+#	if 'precip_inphr' in newvals:
+#		precip_1hr="{0:.1f}".format(newvals['precip_inphr']['reading'])
+
+	# Temp last 24 hrs
 	max_temp='N/A'
 	min_temp='N/A'
 	t,s = data.theDataReader.GetCacheStats(settings.origins.outside_T,oldest_hour=24)
@@ -227,7 +230,7 @@ def update_gauges(*args):
 	data.theDataReader.ephemera['min_temp_24hr']=min_temp
 	data.theDataReader.ephemera['max_temp_24hr']=max_temp
 
-	# last 24 hrs
+	# Humidity last 24 hrs
 	max_humidity='N/A'
 	min_humidity='N/A'
 	t,s = data.theDataReader.GetCacheStats(settings.origins.outside_H,oldest_hour=24)
@@ -239,19 +242,42 @@ def update_gauges(*args):
 	data.theDataReader.ephemera['min_humidity_24hr']=min_humidity
 	data.theDataReader.ephemera['max_humidity_24hr']=max_humidity
 
-	precip_24hr = 'N/A'
-	t,readings = data.theDataReader.GetTimestampUTCData('precip_inphr',oldest_hour=24)
-	if len(readings) > 0:
-		max_readings=[]
-		for tv in np.unique(t):
-			max_readings.append(np.max(readings[t==tv]))
-		precip_24hr = "{0:.2f}".format(np.sum(max_readings))
+	# Pressure last 24 hrs
+	pressure_max_24='N/A'
+	pressure_min_24='N/A'
+	t,s = data.theDataReader.GetCacheStats(settings.origins.outside_P,oldest_hour=24)
+	if len(s) > 0 and len(s['max']) > 0:
+		pressure_max_24 = "{0:.1f}".format(np.max(s['max']))
+	if len(s) > 0 and len(s['min']) > 0:
+		pressure_min_24 = "{0:.1f}".format(np.min(s['min']))
 
-	data.theDataReader.ephemera['precip_24hr']=precip_24hr
+	data.theDataReader.ephemera['min_pressure_24hr']=pressure_min_24
+	data.theDataReader.ephemera['max_pressure_24hr']=pressure_max_24
+
+	# Pressure Trend
+	pressure_trend = 'N/A'
+	t,s = data.theDataReader.GetTimestampUTCData(settings.origins.outside_P,oldest_hour=float(settings.pressure_trend_minutes)/60.)
+	if len(s) > 1 and len(t) > 1:
+		slope, offset = np.polyfit(t, s, 1)
+		delta_t = t[-1]-t[0]
+		if delta_t > 0:
+			pressure_trend = "{0:.3f}".format(slope*delta_t)
+	data.theDataReader.ephemera['pressure_trend_{0}min'.format(settings.pressure_trend_minutes)]=pressure_trend
+		
+
+#	precip_24hr = 'N/A'
+#	t,readings = data.theDataReader.GetTimestampUTCData('precip_inphr',oldest_hour=24)
+#	if len(readings) > 0:
+#		max_readings=[]
+#		for tv in np.unique(t):
+#			max_readings.append(np.max(readings[t==tv]))
+#		precip_24hr = "{0:.2f}".format(np.sum(max_readings))
+
+#	data.theDataReader.ephemera['precip_24hr']=precip_24hr
 	
 	# precip_ytd = 'N/A'
 
-	return current_temp, max_temp, min_temp, current_humidity, max_humidity, min_humidity, precip_1hr, precip_24hr, # precip_ytd
+	return current_temp, max_temp, min_temp, current_humidity, max_humidity, min_humidity, current_pressure, pressure_trend, pressure_max_24, pressure_min_24, # precip_ytd
 
 def SetupCallbacks(app):
 	""" params: dash app) """
@@ -282,28 +308,29 @@ def SetupCallbacks(app):
 	def callback_update_forecast(*args):
 		return(update_forecast(args))
 	
-	@app.callback(
-		[
-			Output(component_id='precip-ytd', component_property='children'),
-		],
-		Input(component_id=vc.theDailyPrecipInterval.id, component_property=vc.theDailyPrecipInterval.n_intervals)
-	)
-	def callback_update_dailyprecip(*args):
-		return update_dailyprecip(args)
+#	@app.callback(
+#		[
+#			Output(component_id='precip-ytd', component_property='children'),
+#		],
+#		Input(component_id=vc.theDailyPrecipInterval.id, component_property=vc.theDailyPrecipInterval.n_intervals)
+#	)
+#	def callback_update_dailyprecip(*args):
+#		return update_dailyprecip(args)
 	
 
 
 	@app.callback(
 		[
 			Output(component_id='temp-now', component_property='children'),
-			Output(component_id='temp-max-24', component_property='children'),
-			Output(component_id='temp-min-24', component_property='children'),
+			Output(component_id='temp-max-24hr', component_property='children'),
+			Output(component_id='temp-min-24hr', component_property='children'),
 			Output(component_id='humidity-now', component_property='children'),
-			Output(component_id='humidity-max-24', component_property='children'),
-			Output(component_id='humidity-min-24', component_property='children'),
-			Output(component_id='precip-1hr', component_property='children'),
-			Output(component_id='precip-24hr', component_property='children'),
-#			Output(component_id='precip-ytd', component_property='children'),
+			Output(component_id='humidity-max-24hr', component_property='children'),
+			Output(component_id='humidity-min-24hr', component_property='children'),
+			Output(component_id='pressure-now', component_property='children'),
+			Output(component_id='pressure-trend', component_property='children'),
+			Output(component_id='pressure-max-24hr', component_property='children'),
+			Output(component_id='pressure-min-24hr', component_property='children'),
 		],
 		Input(component_id=vc.theInterval.id, component_property=vc.theInterval.n_intervals)
 	)

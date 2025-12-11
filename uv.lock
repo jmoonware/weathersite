@@ -176,7 +176,7 @@ wheels = [
 [[package]]
 name = "datalogger"
 version = "0.1.0"
-source = { git = "https://github.com/jmoonware/DataLogger#9512abb7ffaa1d2df7afa4ec5cf8ae9332eb626b" }
+source = { git = "https://github.com/jmoonware/DataLogger#92d2ceb231d9a6ead8ac1cea751f14079b360c60" }
 dependencies = [
     { name = "commandwork" },
     { name = "jedi-language-server" },

@@ -44,11 +44,11 @@ def SetupView(controller,dr):
 										dbc.Table(html.Tbody([
 										html.Tr([
 											html.Td(html.H5("Temperature Max (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='temp-max-24',className='text-primary'),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("N/A",id='temp-max-24hr',className='text-primary'),style={'textAlign': 'center','verticalAlign':'middle'}),
 										]),
 										html.Tr([
 											html.Td(html.H5("Temperature Min (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='temp-min-24',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("N/A",id='temp-min-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
 										]),
 										])),
 									]
@@ -75,11 +75,11 @@ def SetupView(controller,dr):
 										dbc.Table(html.Tbody([
 										html.Tr([
 											html.Td(html.H5("Humidity Max (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='humidity-max-24',className='text-primary'),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("N/A",id='humidity-max-24hr',className='text-primary'),style={'textAlign': 'center','verticalAlign':'middle'}),
 										]),
 										html.Tr([
 											html.Td(html.H5("Humidity Min (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='humidity-min-24',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("N/A",id='humidity-min-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
 										]),
 										])),
 									]
@@ -99,20 +99,38 @@ def SetupView(controller,dr):
 						dbc.Card(
 							[
 								dbc.CardBody(
+#									[
+#										html.H3("Precipitation (in)", className="text-primary"),
+#										dbc.Table(html.Tbody([
+#										html.Tr([
+#											html.Td(html.H5("Last Hour"),style={'textAlign': 'center','verticalAlign':'middle'}),
+#											html.Td(html.H5("N/A",id='precip-1hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+#										]),
+#										html.Tr([												
+#											html.Td(html.H5("Last 24 hrs"),style={'textAlign': 'center','verticalAlign':'middle'}),
+#											html.Td(html.H5("N/A",id='precip-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+#										]),
+#										html.Tr([
+#											html.Td(html.H5("YTD"),style={'textAlign': 'center','verticalAlign':'middle'}),
+#											html.Td(html.H5("N/A",id='precip-ytd',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+#										]),
+#										])),
+#									]
 									[
-										html.H3("Precipitation (in)", className="text-primary"),
+										html.H3("Pressure (inHg)", className="text-primary"),
+										dbc.ListGroupItem(html.H1("N/A",id='pressure-now',className='text-info'),style={'textAlign': 'center','verticalAlign':'middle'}),
 										dbc.Table(html.Tbody([
 										html.Tr([
-											html.Td(html.H5("Last Hour"),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='precip-1hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("Trend ({0} min)".format(settings.pressure_trend_minutes)),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("N/A",id='pressure-trend',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
 										]),
 										html.Tr([												
-											html.Td(html.H5("Last 24 hrs"),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='precip-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("Pressure Max (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("N/A",id='pressure-max-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
 										]),
 										html.Tr([
-											html.Td(html.H5("YTD"),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='precip-ytd',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("Pressure Min (24 hr)"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("N/A",id='pressure-min-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
 										]),
 										])),
 									]
