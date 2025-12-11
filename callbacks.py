@@ -206,11 +206,11 @@ def update_gauges(*args):
 	precip_1hr = "{0:.1f}".format(np.random.rand()*10)
 
 	newvals=data.theDataReader.GetLatestReadings()
-	if 'outside_T' in newvals:
-		current_temp="{0:.1f}".format((9*newvals['outside_T']['reading']/5.)+32)
+	if settings.origins.outside_T in newvals:
+		current_temp="{0:.1f}".format((9*newvals[settings.origins.outside_T]['reading']/5.)+32)
 
-	if 'outside_H' in newvals:
-		current_humidity="{0:.1f}".format(newvals['outside_H']['reading'])
+	if settings.origins.outside_H in newvals:
+		current_humidity="{0:.1f}".format(newvals[settings.origins.outside_H]['reading'])
 
 	if 'precip_inphr' in newvals:
 		precip_1hr="{0:.1f}".format(newvals['precip_inphr']['reading'])
