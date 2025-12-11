@@ -1,3 +1,4 @@
+import logging
 
 class Origins:
 	def __init__(self):
@@ -18,3 +19,4 @@ page_sub_banner="Harvest Lane"
 origins = Origins()
 report_timezone="US/Eastern"
 pressure_trend_minutes=20
+log_level=logging.INFO

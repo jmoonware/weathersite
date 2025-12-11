@@ -129,7 +129,7 @@ def SetupView(controller,dr):
 											html.Td(html.H5("N/A",id='pressure-max-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
 										]),
 										html.Tr([
-											html.Td(html.H5("Pressure Min (24 hr)"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											html.Td(html.H5("Pressure Min (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
 											html.Td(html.H5("N/A",id='pressure-min-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
 										]),
 										])),
@@ -137,6 +137,7 @@ def SetupView(controller,dr):
 								)
 							],
 						),
+						html.Div(' ',style={'margin-bottom': 25}),
 					],
 					xs=11,
 					sm=11,
@@ -236,7 +237,7 @@ def SetupView(controller,dr):
 									]),
 							],
 						),
-#						html.Div(' ',style={'margin-bottom': 25}),
+ 						html.Div(' ',style={'margin-bottom': 15}),
 						dbc.Card(
 							[
 								dbc.CardBody(

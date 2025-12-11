@@ -21,7 +21,7 @@ def StartDataLogging():
 	theDataReader=DataReader(settings={'data_root':settings.data_root})
 	logFormatString='\t'.join(['%(asctime)s','%(levelname)s','%(message)s'])
 	theDataReader.report_timezone = settings.report_timezone
-	level=logging.DEBUG
+	level=settings.log_level
 	addr=theDataWriter.__repr__().split('.')[-1].split(' ')[-1].split('>')[0]
 	filename=settings.log_path.split('.txt')[0]+addr+'.txt' # unique-ish log name every startover
 	maxbytes=10000000
