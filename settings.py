@@ -3,9 +3,9 @@ class Origins:
 	def __init__(self):
 		self.wind_speed='wind_vmph'
 		self.wind_angle='wind_angle'
-		self.garage_T='garage_T'
-		self.garage_H='garage_H'
-		self.garage_P='garage_P'
+		self.outside_T='garage_T'
+		self.outside_H='garage_H'
+		self.outside_P='garage_P'
 
 data_root=r'tests/wsdata'
 log_path=r'tests/test_log.txt'
