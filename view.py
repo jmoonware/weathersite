@@ -120,18 +120,22 @@ def SetupView(controller,dr):
 										html.H3("Pressure (inHg)", className="text-primary"),
 										dbc.ListGroupItem(html.H1("N/A",id='pressure-now',className='text-info'),style={'textAlign': 'center','verticalAlign':'middle'}),
 										dbc.Table(html.Tbody([
-										html.Tr([
-											html.Td(html.H5("Trend ({0} min)".format(settings.pressure_trend_minutes)),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='pressure-trend',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
-										]),
-										html.Tr([												
-											html.Td(html.H5("Pressure Max (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='pressure-max-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
-										]),
-										html.Tr([
-											html.Td(html.H5("Pressure Min (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
-											html.Td(html.H5("N/A",id='pressure-min-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
-										]),
+											html.Tr([
+												html.Td(html.H5("Trend ({0} min)".format(settings.pressure_trend_minutes)),style={'textAlign': 'center','verticalAlign':'middle'}),
+												html.Td(html.H5("N/A",id='pressure-trend',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											]),
+											html.Tr([
+												html.Td(html.H5("Trend (1 hr)"),style={'textAlign': 'center','verticalAlign':'middle'}),
+												html.Td(html.H5("N/A",id='pressure-trend-1hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											]),
+											html.Tr([												
+												html.Td(html.H5("Pressure Max (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
+												html.Td(html.H5("N/A",id='pressure-max-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											]),
+											html.Tr([
+												html.Td(html.H5("Pressure Min (24 hrs)"),style={'textAlign': 'center','verticalAlign':'middle'}),
+												html.Td(html.H5("N/A",id='pressure-min-24hr',className="text-primary"),style={'textAlign': 'center','verticalAlign':'middle'}),
+											]),
 										])),
 									]
 								)
@@ -159,8 +163,21 @@ def SetupView(controller,dr):
 										html.Tr([
 											html.Td(html.H5("N/A",id='forecast-1',className="text-body"),style={'textAlign': 'left','verticalAlign':'middle'}),
 										]),
+										html.Tr([
+											html.Td(html.H5("N/A",id='forecast-2',className="text-body"),style={'textAlign': 'left','verticalAlign':'middle'}),
+										]),
+										html.Tr([
+											html.Td(html.H5("N/A",id='forecast-3',className="text-body"),style={'textAlign': 'left','verticalAlign':'middle'}),
+										]),
+										html.Tr([
+											html.Td(html.H5("N/A",id='forecast-4',className="text-body"),style={'textAlign': 'left','verticalAlign':'middle'}),
+										]),
+										html.Tr([
+											html.Td(html.H5("N/A",id='forecast-5',className="text-body"),style={'textAlign': 'left','verticalAlign':'middle'}),
+										]),
+
 										])),
-									]
+									],style={"maxHeight": "500px", "overflow": "scroll"},
 								),
 							],
 						),

@@ -135,11 +135,13 @@ def update_forecast(*args):
 	for ifs, fs in enumerate(forecast_strings):
 		data.theDataReader.ephemera['Forecast{0}'.format(ifs)]=fs
 
-	if len(forecast_strings) > 1:
-		forecast_string = forecast_strings[0]
-		forecast_string_1 = forecast_strings[1]
+	if len(forecast_strings) < 6:
+		for _ in range(6-len(forecast_string)):
+			forecast_strings.append("")
+#		forecast_string = forecast_strings[0]
+#		forecast_string_1 = forecast_strings[1]
 
-	return forecast_string, forecast_string_1
+	return tuple(forecast_strings[:6])
 
 def update_dailyprecip(*args):
 
@@ -213,7 +215,7 @@ def update_gauges(*args):
 		current_humidity="{0:.1f}".format(newvals[settings.origins.outside_H]['reading'])
 
 	if settings.origins.outside_P in newvals:
-		current_pressure="{0:.1f}".format(newvals[settings.origins.outside_P]['reading'])
+		current_pressure="{0:.2f}".format(newvals[settings.origins.outside_P]['reading'])
 
 #	if 'precip_inphr' in newvals:
 #		precip_1hr="{0:.1f}".format(newvals['precip_inphr']['reading'])
@@ -247,23 +249,30 @@ def update_gauges(*args):
 	pressure_min_24='N/A'
 	t,s = data.theDataReader.GetCacheStats(settings.origins.outside_P,oldest_hour=24)
 	if len(s) > 0 and len(s['max']) > 0:
-		pressure_max_24 = "{0:.1f}".format(np.max(s['max']))
+		pressure_max_24 = "{0:.2f}".format(np.max(s['max']))
 	if len(s) > 0 and len(s['min']) > 0:
-		pressure_min_24 = "{0:.1f}".format(np.min(s['min']))
+		pressure_min_24 = "{0:.2f}".format(np.min(s['min']))
 
 	data.theDataReader.ephemera['min_pressure_24hr']=pressure_min_24
 	data.theDataReader.ephemera['max_pressure_24hr']=pressure_max_24
 
-	# Pressure Trend
+	# Pressure Trends
 	pressure_trend = 'N/A'
-	t,s = data.theDataReader.GetTimestampUTCData(settings.origins.outside_P,oldest_hour=float(settings.pressure_trend_minutes)/60.)
-	if len(s) > 1 and len(t) > 1:
-		slope, offset = np.polyfit(t, s, 1)
-		delta_t = t[-1]-t[0]
-		if delta_t > 0:
-			pressure_trend = "{0:.3f}".format(slope*delta_t)
-	data.theDataReader.ephemera['pressure_trend_{0}min'.format(settings.pressure_trend_minutes)]=pressure_trend
+	pressure_trend_1hr = 'N/A'
+	pt_keys = ["{0}min".format(settings.pressure_trend_minutes),"1hr"]
+	pt_vals = [float(settings.pressure_trend_minutes)/60.,1.]
+	pressure_trends=[pressure_trend,pressure_trend_1hr]
+	for idx, pt_key, pt_val in zip(range(len(pt_keys)),pt_keys,pt_vals):
+		t,s = data.theDataReader.GetTimestampUTCData(settings.origins.outside_P,oldest_hour=pt_val)
+		if len(s) > 1 and len(t) > 1:
+			slope, offset = np.polyfit(t, s, 1)
+			delta_t = t[-1]-t[0]
+			if delta_t > 0:
+				pressure_trends[idx] = "{0:.3f}".format(slope*delta_t)
+		data.theDataReader.ephemera['pressure_trend_{0}'.format(pt_key)]=pressure_trends[idx]
 		
+	pressure_trend = pressure_trends[0]
+	pressure_trend_1hr = pressure_trends[1]
 
 #	precip_24hr = 'N/A'
 #	t,readings = data.theDataReader.GetTimestampUTCData('precip_inphr',oldest_hour=24)
@@ -277,7 +286,7 @@ def update_gauges(*args):
 	
 	# precip_ytd = 'N/A'
 
-	return current_temp, max_temp, min_temp, current_humidity, max_humidity, min_humidity, current_pressure, pressure_trend, pressure_max_24, pressure_min_24, # precip_ytd
+	return current_temp, max_temp, min_temp, current_humidity, max_humidity, min_humidity, current_pressure, pressure_trend, pressure_trend_1hr, pressure_max_24, pressure_min_24, # precip_ytd
 
 def SetupCallbacks(app):
 	""" params: dash app) """
@@ -302,6 +311,10 @@ def SetupCallbacks(app):
 		[
 			Output(component_id='forecast', component_property='children'),
 			Output(component_id='forecast-1', component_property='children'),
+			Output(component_id='forecast-2', component_property='children'),
+			Output(component_id='forecast-3', component_property='children'),
+			Output(component_id='forecast-4', component_property='children'),
+			Output(component_id='forecast-5', component_property='children'),
 		],
 		Input(component_id=vc.theForecastInterval.id, component_property=vc.theForecastInterval.n_intervals)
 	)
@@ -329,6 +342,7 @@ def SetupCallbacks(app):
 			Output(component_id='humidity-min-24hr', component_property='children'),
 			Output(component_id='pressure-now', component_property='children'),
 			Output(component_id='pressure-trend', component_property='children'),
+			Output(component_id='pressure-trend-1hr', component_property='children'),
 			Output(component_id='pressure-max-24hr', component_property='children'),
 			Output(component_id='pressure-min-24hr', component_property='children'),
 		],
