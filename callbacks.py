@@ -210,12 +210,15 @@ def update_gauges(*args):
 	newvals=data.theDataReader.GetLatestReadings()
 	if settings.origins.outside_T in newvals:
 		current_temp="{0:.1f}".format((9*newvals[settings.origins.outside_T]['reading']/5.)+32)
+		data.theDataReader.ephemera['outside_T_F']=current_temp
 
 	if settings.origins.outside_H in newvals:
 		current_humidity="{0:.1f}".format(newvals[settings.origins.outside_H]['reading'])
+		data.theDataReader.ephemera['outside_H_perc']=current_humidity
 
 	if settings.origins.outside_P in newvals:
 		current_pressure="{0:.2f}".format(newvals[settings.origins.outside_P]['reading'])
+		data.theDataReader.ephemera['outside_P_inHg']=current_pressure
 
 #	if 'precip_inphr' in newvals:
 #		precip_1hr="{0:.1f}".format(newvals['precip_inphr']['reading'])
