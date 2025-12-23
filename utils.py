@@ -8,6 +8,8 @@ import requests
 import time
 import settings
 import logging
+import re
+from bs4 import BeautifulSoup as bs
 
 last_update = 0
 
@@ -19,9 +21,9 @@ headers = {
     'Connection': 'keep-alive'
 }
 
+remove_tags_pat = r'<[\\/=\-_\w\s]*>'
+
 def update_forecast(*args):
-	forecast_string = 'None'
-	forecast_string_1 = 'None'
 	
 	# Get the forecast string from National Weather Service
 	forecast_url = settings.forecast_url
@@ -31,31 +33,19 @@ def update_forecast(*args):
 		with requests.Session() as req:
 			res = req.get(forecast_url)
 		if res:
-			lines=res.text.split('\n')
-			fc = [l for l in lines if 'period-name' in l]
-			if len(fc) == 1:
-				forecast_strings = [l.split('title=')[0].replace('"','').strip  () for l in fc[0].split('alt=')[1:]]
-			elif len(fc) == 2:
-				forecast_strings = [l.split('title=')[0].replace('"','').strip  () for l in fc[1].split('alt=')[1:]]
-			else: # old format
-				for l,nl in zip(lines[:-1],lines[1:]):
-					if 'period-name' in l:
-						fs = nl.split('title=')[1].split('class')[0].strip().replace('"','')
-						if len(fs) > 0:
-							forecast_strings.append(fs)
+			soup = bs(res.text,'html.parser')
+			fl=soup.find_all(attrs={'class':'forecast-label'})
+			ft=soup.find_all(attrs={'class':'forecast-text'})
+			for ifl, ift in zip(fl,ft):
+				if hasattr(ifl,'text') and hasattr(ift, 'text'):
+					forecast_strings.append(': '.join([ifl.text,ift.text]))
 	except Exception as ex:
-		pass
+		logging.getLogger(__name__).error("Get Forecast: "+str(ex))
 
 	t = [f for f in forecast_strings if f!=None and len(f) > 0]
 	forecast_strings = t
-	for ifs, fs in enumerate(forecast_strings):
-		data.theDataReader.ephemera['Forecast{0}'.format(ifs)]=fs
 
-	if len(forecast_strings) > 1:
-		forecast_string = forecast_strings[0]
-		forecast_string_1 = forecast_strings[1]
-
-	return forecast_string, forecast_string_1
+	return forecast_strings
 
 def update_dailyprecip(*args):
 

@@ -5,6 +5,7 @@ description = "Web endpoint for data loggers"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "beautifulsoup4>=4.14.3",
     "dash>=3.3.0",
     "dash-bootstrap-components>=2.0.4",
     "dash-daq>=0.6.0",
