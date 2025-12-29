@@ -35,4 +35,12 @@ def SetupRest(app):
 		@app.route('/micro',methods=['GET'])
 		def get_latest_all():
 			callbacks.update_all()
-			return jsonify(data.theDataReader.GetLatestReadings() | data.theDataReader.ephemera)
+			readings = data.theDataReader.GetLatestReadings() 
+			filtered_readings = {}
+			filtered_readings['wind_vmph']=None
+			if 'wind_vmph' in readings:
+				filtered_readings['wind_vmph']=readings['wind_vmph']
+			filtered_readings['wind_angle']=None
+			if 'wind_angle' in readings:
+				filtered_readings['wind_angle']=readings['wind_angle']
+			return jsonify(filtered_readings | data.theDataReader.ephemera)
