@@ -150,16 +150,16 @@ def update_gauges(*args):
 	second_pressure = "{0:.1f}".format(np.random.rand()*10)
 
 	if settings.origins.second_T in newvals:
-		current_temp="{0:.1f}".format((9*newvals[settings.origins.second_T]['reading']/5.)+32)
+		second_temp="{0:.1f}".format((9*newvals[settings.origins.second_T]['reading']/5.)+32)
 		data.theDataReader.ephemera['{0}_T_F'.format(settings.origins.second_tla)]=second_temp
 
 	if settings.origins.second_H in newvals:
-		current_humidity="{0:.1f}".format(newvals[settings.origins.second_H]['reading'])
-		data.theDataReader.ephemera['{0}_H_perc'.format(settings.origins.second_tla)]=current_humidity
+		second_humidity="{0:.1f}".format(newvals[settings.origins.second_H]['reading'])
+		data.theDataReader.ephemera['{0}_H_perc'.format(settings.origins.second_tla)]=second_humidity
 
 	if settings.origins.second_P in newvals:
-		current_pressure="{0:.2f}".format(newvals[settings.origins.second_P]['reading'])
-		data.theDataReader.ephemera['{0}_P_inHg'.format(settings.origins.second_tla)]=current_pressure
+		second_pressure="{0:.2f}".format(newvals[settings.origins.second_P]['reading'])
+		data.theDataReader.ephemera['{0}_P_inHg'.format(settings.origins.second_tla)]=second_pressure
 
 #	if 'precip_inphr' in newvals:
 #		precip_1hr="{0:.1f}".format(newvals['precip_inphr']['reading'])
