@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 import data
 import logging
 import callbacks
+import settings
 
 once = False
 def SetupRest(app):
@@ -96,5 +97,14 @@ def SetupRest(app):
 			for key in data.theDataReader.ephemera:
 				if not 'Forecast' in key:
 					filtered_readings[key]=data.theDataReader.ephemera[key]
+			return jsonify(filtered_readings)
+		@app.route('/microh',methods=['GET'])
+		def get_latest_history(origin=None):
+			if origin==None:
+				origin = settings.origins.outside_T
+			filtered_readings = {}
+			times,readings = data.theDataReader.GetCacheStats(origin,oldest_hour=8,hourly=True)
+			filtered_readings['x']=times
+			filtered_readings['y']=readings
 			return jsonify(filtered_readings)
 

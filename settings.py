@@ -7,6 +7,12 @@ class Origins:
 		self.outside_T='garage_T_C'
 		self.outside_H='garage_H_perc'
 		self.outside_P='garage_P_inHg'
+		self.outside_tla='OUT'
+		self.second_T='shade_T_C'
+		self.second_H='shade_H_perc'
+		self.second_P='shade_P_inHg'
+		self.second_tla='SHD'
+		self.nws_tla='ELM' # could be a local airport
 
 data_root=r'../home-monitor/data_hl'
 log_path=r'tests/test_log.txt'

@@ -20,16 +20,26 @@ import settings
 import utils
 
 last_update = 0
+last_update_nws_temp = 0
 
 # populates all ephemera dicts
 def update_all():
 	global last_update
+	global last_update_nws_temp
 	update_wind_gauge_stats(None)
 	update_gauges(None)
 
+	# update forecast every 4 hours
 	if dt.now().timestamp() - last_update > 4*3600:
 		update_forecast(None)
 		last_update = dt.now().timestamp()
+
+	# update NWS T,H,P vals every 15 min
+	if dt.now().timestamp() - last_update_nws_temp > 900:
+		nws_thp = utils.update_local_thp();
+		for k in nws_thp:
+			data.theDataReader.ephemera[k]=nws_thp[k]
+		last_update_nws_temp = dt.now().timestamp()
 
 def update_wind_gauge_stats(*args):
 	
@@ -132,6 +142,24 @@ def update_gauges(*args):
 	if settings.origins.outside_P in newvals:
 		current_pressure="{0:.2f}".format(newvals[settings.origins.outside_P]['reading'])
 		data.theDataReader.ephemera['outside_P_inHg']=current_pressure
+
+	# second THP values
+	
+	second_temp = "{0:.1f}".format(np.random.rand()*60)
+	second_humidity = "{0:.1f}".format(np.random.rand()*100)
+	second_pressure = "{0:.1f}".format(np.random.rand()*10)
+
+	if settings.origins.second_T in newvals:
+		current_temp="{0:.1f}".format((9*newvals[settings.origins.second_T]['reading']/5.)+32)
+		data.theDataReader.ephemera['{0}_T_F'.format(settings.origins.second_tla)]=second_temp
+
+	if settings.origins.second_H in newvals:
+		current_humidity="{0:.1f}".format(newvals[settings.origins.second_H]['reading'])
+		data.theDataReader.ephemera['{0}_H_perc'.format(settings.origins.second_tla)]=current_humidity
+
+	if settings.origins.second_P in newvals:
+		current_pressure="{0:.2f}".format(newvals[settings.origins.second_P]['reading'])
+		data.theDataReader.ephemera['{0}_P_inHg'.format(settings.origins.second_tla)]=current_pressure
 
 #	if 'precip_inphr' in newvals:
 #		precip_1hr="{0:.1f}".format(newvals['precip_inphr']['reading'])

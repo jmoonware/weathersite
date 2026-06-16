@@ -106,3 +106,56 @@ def update_dailyprecip(*args):
 
 	return precip_ytd_string,
 
+
+def update_local_thp():
+	
+	# Get the forecast string from National Weather Service
+	forecast_url = settings.forecast_url
+	res = None
+	thp = {}
+	try:
+		with requests.Session() as req:
+			res = req.get(forecast_url)
+		if res:
+			soup = bs(res.text,'html.parser')
+			ts=soup.find_all(attrs={'class':'myforecast-current-lrg'})
+			if ts and len(ts)>0 and hasattr(ts[0],'text'):
+				floatval = clean_float(ts[0].text,rchars=[u"\u00B0",'F'])
+				thp['{0}_T_F'.format(settings.origins.nws_tla)]=floatval
+			ltab=soup.find_all(attrs={'id':'current_conditions_detail'})
+			tok_pairs = [x.text for x in ltab[0].find_all('td')]
+			hkey = None
+			pkey = None
+			if int(len(tok_pairs))%2 == 0:
+				for i in range(int(len(tok_pairs)/2)):
+					key = settings.origins.nws_tla+'_'+tok_pairs[2*i].lower().replace(' ','_') 
+					thp[key]=tok_pairs[2*i+1].strip()
+					if 'humidity' in key:
+						hkey = key
+					elif 'barometer' in key:
+						pkey = key
+			if hkey and hkey in thp:
+				thp[hkey.replace("humidity","H")+"_perc"]=clean_float(thp[hkey],rchars=['%'])
+			if pkey and pkey in thp:
+				thp[pkey.replace("barometer","P")+"_inHg"]=clean_float(thp[pkey].split(' ')[0],rchars=['i','n'])
+	except Exception as ex:
+		logging.getLogger(__name__).error("Get NWS THP: "+str(ex))
+
+	return thp
+
+def clean_float(s,rchars=[],chopend=0,default_val=-999.):
+	''' utility function to convert strings with dangly stuff and weird
+		chars to float values
+	'''
+	ntok = s
+	if chopend > 0:
+		ntok=s[:chopend]
+	for c in rchars:
+		ntok=ntok.replace(c,'')
+	floatval = default_val
+	try:
+		floatval=float(ntok)
+	except ValueError as ve:
+		logging.getLogger(__name__).error("utils:clean_float: {0}".format(ve))
+	return(floatval)
+
