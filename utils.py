@@ -120,7 +120,7 @@ def update_local_thp():
 			soup = bs(res.text,'html.parser')
 			ts=soup.find_all(attrs={'class':'myforecast-current-lrg'})
 			if ts and len(ts)>0 and hasattr(ts[0],'text'):
-				floatval = clean_float(ts[0].text,rchars=[u"\u00B0",'F'])
+				floatval = clean_float_string(ts[0].text,rchars=[u"\u00B0",'F'])
 				thp['{0}_T_F'.format(settings.origins.nws_tla)]=floatval
 			ltab=soup.find_all(attrs={'id':'current_conditions_detail'})
 			tok_pairs = [x.text for x in ltab[0].find_all('td')]
@@ -135,17 +135,19 @@ def update_local_thp():
 					elif 'barometer' in key:
 						pkey = key
 			if hkey and hkey in thp:
-				thp[hkey.replace("humidity","H")+"_perc"]=clean_float(thp[hkey],rchars=['%'])
+				thp[hkey.replace("humidity","H")+"_perc"]=clean_float_string(thp[hkey],rchars=['%'])
+				del thp[hkey]
 			if pkey and pkey in thp:
-				thp[pkey.replace("barometer","P")+"_inHg"]=clean_float(thp[pkey].split(' ')[0],rchars=['i','n'])
+				thp[pkey.replace("barometer","P")+"_inHg"]=clean_float_string(thp[pkey].split(' ')[0],rchars=['i','n'])
+				del thp[pkey]
 	except Exception as ex:
 		logging.getLogger(__name__).error("Get NWS THP: "+str(ex))
 
 	return thp
 
-def clean_float(s,rchars=[],chopend=0,default_val=-999.):
+def clean_float_string(s,rchars=[],chopend=0,default_val=-999.):
 	''' utility function to convert strings with dangly stuff and weird
-		chars to float values
+		chars to strings that can be converted to float values
 	'''
 	ntok = s
 	if chopend > 0:
@@ -156,6 +158,6 @@ def clean_float(s,rchars=[],chopend=0,default_val=-999.):
 	try:
 		floatval=float(ntok)
 	except ValueError as ve:
-		logging.getLogger(__name__).error("utils:clean_float: {0}".format(ve))
-	return(floatval)
+		logging.getLogger(__name__).error("utils:clean_float_string: {0}".format(ve))
+	return(ntok)
 
