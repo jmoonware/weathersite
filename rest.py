@@ -85,6 +85,7 @@ def SetupRest(app):
 		# just front screen values
 		@app.route('/microd',methods=['GET'])
 		def get_latest_data():
+			args=request.args
 			callbacks.update_all()
 			readings = data.theDataReader.GetLatestReadings() 
 			filtered_readings = {}
@@ -94,9 +95,11 @@ def SetupRest(app):
 			filtered_readings['wind_angle']=None
 			if 'wind_angle' in readings:
 				filtered_readings['wind_angle']=readings['wind_angle']
-			for key in data.theDataReader.ephemera:
-				if not 'Forecast' in key:
-					filtered_readings[key]=data.theDataReader.ephemera[key]
+			# if we use 'v' as an arg only return wind speed/angle
+			if not args.get('v'):
+				for key in data.theDataReader.ephemera:
+					if not 'Forecast' in key:
+						filtered_readings[key]=data.theDataReader.ephemera[key]
 			return jsonify(filtered_readings)
 		@app.route('/microh',methods=['GET'])
 		def get_latest_history(origin=None):
